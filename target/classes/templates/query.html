@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>SQL Executor</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    .error { color: red; margin-top: 10px; }
+    textarea { width: 100%; max-width: 600px; }
+  </style>
+</head>
+<body>
+  <h1>Выполнение SQL-запросов</h1>
+
+  <form th:action="@{/execute}" method="post">
+    <textarea name="sql" rows="5" cols="80" th:text="${sql}"></textarea><br/>
+    <button type="submit">Выполнить</button>
+  </form>
+
+  <!-- Блок для вывода ошибок -->
+  <div th:if="${error}" class="error">
+    <p th:text="${error}"></p>
+  </div>
+
+  <!-- Блок для вывода результатов -->
+  <div th:if="${rows != null and !rows.isEmpty()}">
+    <p>Найдено строк: <span th:text="${rows.size()}">0</span></p>
+    <table>
+      <thead>
+        <tr>
+          <!-- Динамические заголовки колонок -->
+          <th th:each="column : ${columns}" th:text="${column}"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Динамические строки с данными -->
+        <tr th:each="row : ${rows}">
+          <td th:each="column : ${columns}" th:text="${row.get(column)}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Сообщение при отсутствии результатов -->
+  <div th:if="${rows != null and rows.isEmpty()}">
+    <p>Нет данных для отображения</p>
+  </div>
+</body>
+</html>
